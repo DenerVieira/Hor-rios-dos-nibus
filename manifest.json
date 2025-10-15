@@ -1,0 +1,21 @@
+{
+"name": "Horários SPTrans Offline",
+"short_name": "Ônibus Offline",
+"description": "Consulta offline dos horários de ônibus SPTrans. Funciona sem internet.",
+"start_url": "/horarios_dos_onibus_offline.html",
+"display": "standalone",
+"background_color": "#f7f9fb",
+"theme_color": "#1e40af",
+"icons": [
+{
+"src": "https://www.google.com/search?q=https://placehold.co/192x192/1e40af/ffffff%3Ftext%3DO",
+"sizes": "192x192",
+"type": "image/png"
+},
+{
+"src": "https://www.google.com/search?q=https://placehold.co/512x512/1e40af/ffffff%3Ftext%3DO",
+"sizes": "512x512",
+"type": "image/png"
+}
+]
+}
