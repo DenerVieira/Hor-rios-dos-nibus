@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horário de Ônibus</title>
+    <link rel="manifest" href="/manifest.json">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+        }
+        .scroll-container {
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        /* Estilos de fonte para mobile */
+        @media (max-width: 640px) {
+            .text-3xl { font-size: 2rem; }
+            .text-2xl { font-size: 1.5rem; }
+            .text-3xl.font-extrabold { font-weight: 800; }
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 lg:p-8 min-h-screen">
+
+    <div class="max-w-4xl mx-auto">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-extrabold text-blue-800 tracking-tight">
+                HORÁRIO DE ÔNIBUS
+            </h1>
+            <p class="text-gray-500 mt-1">Consulte as partidas de ônibus da sua linha.</p>
+        </header>
+
+        <div class="bg-white p-6 rounded-xl shadow-lg space-y-4 mb-8 border border-gray-200">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                
+                <div>
+                    <label for="linha-select" class="block text-sm font-medium text-gray-700 mb-1">Linha</label>
+                    <select id="linha-select" onchange="updateSentidoOptions();" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm transition duration-150 ease-in-out">
+                        </select>
+                </div>
+
+                <div>
+                    <label for="sentido-select" class="block text-sm font-medium text-gray-700 mb-1">Sentido (Ida ou Volta)</label>
+                    <select id="sentido-select" onchange="displayHorarios();" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm transition duration-150 ease-in-out">
+                        </select>
+                </div>
+
+                <div>
+                    <label for="dia-select" class="block text-sm font-medium text-gray-700 mb-1">Dia da Semana</label>
+                    <select id="dia-select" onchange="displayHorarios();" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm transition duration-150 ease-in-out">
+                        <option value="Segunda a Sexta">SEGUNDA A SEXTA</option>
+                        <option value="SÁBADO">SÁBADO</option>
+                        <option value="DOMINGO">DOMINGO</option>
+                    </select>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="horarios-container" class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+            <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <h2 class="text-2xl font-bold text-gray-800">Horários de Partida</h2>
+            </div>
+            
+            <div id="proxima-partida-card" class="mb-6 p-3 rounded-lg border-2 border-green-500 bg-green-50 text-center hidden">
+                <p class="text-sm font-semibold text-green-700">Próxima Partida:</p>
+                <p id="proxima-partida-time" class="text-3xl font-extrabold text-green-600 mt-1"></p>
+                <p id="proxima-partida-status" class="text-xs text-green-700 mt-1"></p>
+            </div>
+            
+            <p id="operacao-status" class="text-sm text-gray-600 mb-4"></p>
+            <div id="horarios-grid" class="scroll-container grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3">
+                </div>
+            
+            <p id="aviso-data-simulada" class="mt-6 text-xs text-orange-500 text-center hidden">
+                * Aviso: Esta linha está usando horários simulados.
+            </p>
+
+            <p id="no-data" class="text-center text-gray-500 mt-4 hidden">Selecione uma linha, um sentido e um dia para ver os horários.</p>
+        </div>
+        
+    </div>
+
+    <footer class="mt-10 text-center text-gray-400 text-xs">
+        Desenvolvido com dados reais da 6L01-10 (MARSILAC), 6L03-10 (CIPÓ DO MEIO) e dados atualizados da 6L02-10 (JD EUCALIPTOS).
+    </footer>
+    
+    <script>
+        // Dados de Horários
+        const busData = {
+            "6L01-10": {
+                "nome": "MARSILAC",
+                "simulado": false, 
+                "horarios": {
+                    "TERMINAL VARGINHA": {
+                        "Segunda a Sexta": {
+                            "operacao": "04:00-00:30",
+                            "partidas": ["04:00", "04:20", "04:40", "05:00", "05:20", "05:40", "06:00", "06:20", "06:45", "07:10", "07:30", "07:55", "08:15", "08:35", "08:55", "09:15", "09:35", "09:55", "10:15", "10:35", "10:55", "11:15", "11:35", "11:55", "12:15", "12:35", "12:55", "13:15", "13:35", "13:55", "14:15", "14:35", "14:50", "15:10", "15:30", "15:50", "16:15", "16:35", "16:55", "17:15", "17:35", "17:55", "18:15", "18:35", "18:55", "19:20", "19:35", "19:55", "20:15", "20:35", "20:55", "21:15", "21:35", "21:55", "22:25", "22:55", "23:25", "23:55", "00:30"]
+                        },
+                        "SÁBADO": {
+                            "operacao": "04:00-00:30",
+                            "partidas": ["04:00", "04:25", "04:50", "05:10", "05:30", "05:50", "06:10", "06:30", "06:50", "07:10", "07:30", "07:50", "08:10", "08:40", "09:10", "09:30", "09:50", "10:10", "10:40", "11:10", "11:40", "12:10", "12:40", "13:10", "13:40", "14:10", "14:40", "15:10", "15:40", "16:10", "16:40", "17:10", "17:40", "18:10", "18:40", "19:10", "19:40", "20:10", "20:40", "21:15", "21:50", "22:20", "22:55", "23:35", "00:30"]
+                        },
+                        "DOMINGO": {
+                            "operacao": "04:30-00:30",
+                            "partidas": ["04:30", "05:00", "05:30", "06:00", "06:30", "07:00", "07:30", "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00", "22:30", "23:00", "23:45", "00:30"]
+                        }
+                    },
+                    "MARSILAC": {
+                        "Segunda a Sexta": {
+                            "operacao": "05:00-01:45",
+                            "partidas": ["05:00", "05:20", "05:40", "06:05", "06:25", "06:45", "07:10", "07:30", "07:55", "08:15", "08:35", "09:00", "09:20", "09:40", "10:00", "10:20", "10:40", "11:00", "11:20", "11:40", "12:00", "12:20", "12:40", "13:00", "13:20", "13:40", "14:00", "14:20", "14:40", "15:00", "15:20", "15:40", "16:00", "16:15", "16:30", "16:45", "17:00", "17:15", "17:35", "17:50", "18:05", "18:25", "18:45", "19:05", "19:25", "19:45", "20:05", "20:25", "20:45", "20:55", "21:10", "21:30", "21:50", "22:10", "22:30", "22:50", "23:20", "23:55", "00:50", "01:45"]
+                        },
+                        "SÁBADO": {
+                            "operacao": "05:00-01:45",
+                            "partidas": ["05:00", "05:35", "05:50", "06:05", "06:25", "06:45", "07:10", "07:30", "07:50", "08:10", "08:30", "08:50", "09:10", "09:40", "10:10", "10:25", "10:50", "11:10", "11:40", "12:15", "12:45", "13:15", "13:45", "14:15", "14:45", "15:15", "15:45", "16:15", "16:45", "17:15", "17:35", "17:55", "18:15", "18:35", "18:55", "19:15", "19:40", "20:05", "20:35", "21:00", "21:30", "22:05", "22:40", "23:15", "23:55", "00:50", "01:45"]
+                        },
+                        "DOMINGO": {
+                            "operacao": "05:30-01:40",
+                            "partidas": ["05:30", "06:00", "06:30", "07:00", "07:30", "08:00", "08:30", "09:00", "09:30", "10:05", "10:35", "11:05", "11:35", "12:05", "12:35", "13:05", "13:35", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:05", "17:35", "18:05", "18:35", "19:05", "19:35", "20:00", "20:30", "21:00", "21:30", "21:55", "22:25", "22:55", "23:25", "23:55", "00:45", "01:40"]
+                        }
+                    }
+                }
+            },
+            "6L02-10": {
+                "nome": "JD EUCALIPTOS",
+                "simulado": false, 
+                "horarios": {
+                    "TERMINAL PARELHEIROS": {
+                        "Segunda a Sexta": {
+                            "operacao": "05:00-23:00",
+                            "partidas": ["05:00", "05:50", "06:50", "07:50", "08:55", "10:05", "11:15", "12:15", "14:00", "15:25", "16:30", "17:35", "18:40", "19:50", "21:00", "22:05", "23:00"]
+                        },
+                        "SÁBADO": {
+                            "operacao": "05:30-22:00",
+                            "partidas": ["05:30", "07:00", "08:30", "10:00", "11:30", "13:00", "14:30", "16:00", "17:30", "19:00", "20:30", "22:00"]
+                        },
+                        "DOMINGO": {
+                            "operacao": "06:00-21:20",
+                            "partidas": ["06:00", "07:40", "09:20", "11:00", "12:40", "14:40", "16:20", "18:00", "19:40", "21:20"]
+                        }
+                    },
+                    "JD EUCALIPTOS": {
+                        "Segunda a Sexta": {
+                            "operacao": "05:50-23:45",
+                            "partidas": ["05:50", "06:40", "07:40", "08:40", "09:45", "10:55", "12:05", "13:05", "14:50", "16:15", "17:20", "18:25", "19:25", "20:35", "21:45", "22:50", "23:45"]
+                        },
+                        "SÁBADO": {
+                            "operacao": "06:15-22:45",
+                            "partidas": ["06:15", "07:45", "09:15", "10:40", "12:15", "13:45", "15:15", "16:45", "18:15", "19:45", "21:15", "22:45"]
+                        },
+                        "DOMINGO": {
+                            "operacao": "06:45-22:05",
+                            "partidas": ["06:45", "08:25", "10:05", "11:45", "13:25", "15:25", "17:05", "18:45", "20:25", "22:05"]
+                        }
+                    }
+                }
+            },
+            "6L03-10": {
+                "nome": "CIPÓ DO MEIO",
+                "simulado": false,
+                "horarios": {
+                    "TERMINAL PARELHEIROS": {
+                        "Segunda a Sexta": {
+                            "operacao": "03:50-23:30",
+                            "partidas": ["03:50", "04:30", "05:10", "05:50", "06:30", "07:10", "07:50", "08:30", "09:10", "09:55", "10:40", "11:30", "12:20", "13:10", "14:00", "14:50", "15:40", "16:30", "17:15", "18:00", "18:40", "19:20", "20:05", "20:50", "21:40", "22:20", "23:00", "23:30"]
+                        },
+                        "SÁBADO": {
+                            "operacao": "04:30-23:30",
+                            "partidas": ["04:30", "05:30", "06:30", "07:30", "08:30", "09:30", "10:30", "11:30", "12:30", "13:30", "14:30", "15:30", "16:30", "17:30", "18:30", "19:30", "20:30", "21:30", "22:30", "23:30"]
+                        },
+                        "DOMINGO": {
+                            "operacao": "04:30-23:30",
+                            "partidas": ["04:30", "05:30", "06:30", "07:30", "08:30", "09:30", "10:30", "11:30", "12:30", "13:30", "14:30", "15:30", "16:30", "17:30", "18:30", "19:30", "20:30", "21:30", "22:30", "23:30"]
+                        }
+                    },
+                    "CIPÓ DO MEIO": {
+                        "Segunda a Sexta": {
+                            "operacao": "04:35-00:20",
+                            "partidas": ["04:35", "05:15", "06:00", "06:40", "07:20", "08:00", "08:40", "09:20", "10:00", "10:45", "11:30", "12:20", "13:10", "14:00", "14:50", "15:40", "16:30", "17:25", "18:10", "19:00", "19:45", "20:25", "21:05", "21:45", "22:25", "23:05", "23:45", "00:20"]
+                        },
+                        "SÁBADO": {
+                            "operacao": "05:10-00:20",
+                            "partidas": ["05:10", "06:10", "07:10", "08:10", "09:10", "10:10", "11:15", "12:15", "13:15", "14:15", "15:15", "16:15", "17:15", "18:15", "19:15", "20:15", "21:15", "22:15", "23:15", "00:20"]
+                        },
+                        "DOMINGO": {
+                            "operacao": "05:10-00:20",
+                            "partidas": ["05:10", "06:10", "07:10", "08:10", "09:10", "10:10", "11:15", "12:15", "13:15", "14:15", "15:15", "16:15", "17:15", "18:15", "19:15", "20:15", "21:15", "22:15", "23:15", "00:20"]
+                        }
+                    }
+                }
+            }
+        };
+
+        // Referências DOM
+        const linhaSelect = document.getElementById('linha-select');
+        const sentidoSelect = document.getElementById('sentido-select');
+        const diaSelect = document.getElementById('dia-select');
+        const horariosGrid = document.getElementById('horarios-grid');
+        const operacaoStatus = document.getElementById('operacao-status');
+        const avisoDataSimulada = document.getElementById('aviso-data-simulada');
+        const noData = document.getElementById('no-data');
+        const proximaPartidaCard = document.getElementById('proxima-partida-card');
+        const proximaPartidaTime = document.getElementById('proxima-partida-time');
+        const proximaPartidaStatus = document.getElementById('proxima-partida-status');
+
+        // --- Funções de Utilitários ---
+        
+        function getDiaSemanaAtual() {
+            const today = new Date();
+            const dayOfWeek = today.getDay(); // 0 (Dom) to 6 (Sáb)
+            if (dayOfWeek >= 1 && dayOfWeek <= 5) return "Segunda a Sexta";
+            if (dayOfWeek === 6) return "SÁBADO";
+            if (dayOfWeek === 0) return "DOMINGO";
+            return "Segunda a Sexta";
+        }
+
+        function getMinutesFromTime(time) {
+            const [h, m] = time.split(':').map(Number);
+            return h * 60 + m;
+        }
+        
+        function getNextPartida(partidas, dia) {
+            const now = new Date();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            let nextPartida = null;
+            let minutesUntilNext = Infinity;
+            
+            // 1. Verificar a próxima partida ainda HOJE (inclui horários como 00:30, 01:45 se for o fim da noite)
+            for (const time of partidas) {
+                const partidaMinutes = getMinutesFromTime(time);
+                
+                // Trata partidas após 23:59: o 00:20 é ajustado se a hora atual for tarde (ex: após 18:00)
+                let adjustedPartidaMinutes = partidaMinutes;
+                if (partidaMinutes < 5 * 60 && currentMinutes > 18 * 60) {
+                    adjustedPartidaMinutes += 24 * 60;
+                }
+
+                if (adjustedPartidaMinutes > currentMinutes) {
+                    const diff = adjustedPartidaMinutes - currentMinutes;
+                    if (diff < minutesUntilNext) {
+                        minutesUntilNext = diff;
+                        nextPartida = time;
+                    }
+                }
+            }
+
+            if (nextPartida) {
+                const hours = Math.floor(minutesUntilNext / 60);
+                const minutes = minutesUntilNext % 60;
+                const status = (minutesUntilNext === Infinity) 
+                    ? "Operação encerrada. Próxima partida do dia."
+                    : `Partida mais próxima: em ${hours}h ${minutes}m.`;
+
+                return { time: nextPartida, minutesUntilNext, status };
+            }
+
+            // 2. Se não achou hoje, pega a primeira partida
+            if (partidas.length > 0) {
+                return { time: partidas[0], minutesUntilNext: null, status: "Operação encerrada. Próxima partida do dia." };
+            }
+
+            return null;
+        }
+
+        // --- Funções da UI Principal ---
+
+        function populateLinhas() {
+            const lines = Object.keys(busData);
+            linhaSelect.innerHTML = lines.map(key => 
+                `<option value="${key}">${key} - ${busData[key].nome}</option>`
+            ).join('');
+        }
+
+        function updateSentidoOptions() {
+            const selectedLineKey = linhaSelect.value;
+            if (!selectedLineKey) return;
+
+            const sentidos = Object.keys(busData[selectedLineKey].horarios);
+            sentidoSelect.innerHTML = sentidos.map(sentido => 
+                `<option value="${sentido}">${sentido}</option>`
+            ).join('');
+            
+            displayHorarios(); 
+        }
+
+        function displayHorarios() {
+            const selectedLineKey = linhaSelect.value;
+            const selectedSentido = sentidoSelect.value;
+            const selectedDia = diaSelect.value;
+            
+            horariosGrid.innerHTML = '';
+            proximaPartidaCard.classList.add('hidden');
+            operacaoStatus.textContent = '';
+            avisoDataSimulada.classList.add('hidden');
+            noData.classList.add('hidden');
+
+            if (!selectedLineKey || !selectedSentido || !selectedDia) {
+                noData.classList.remove('hidden');
+                return;
+            }
+
+            const lineData = busData[selectedLineKey];
+            const sentidoData = lineData.horarios[selectedSentido];
+
+            if (lineData.simulado) {
+                avisoDataSimulada.classList.remove('hidden');
+            } else {
+                avisoDataSimulada.classList.add('hidden');
+            }
+
+            if (!sentidoData || !sentidoData[selectedDia]) {
+                horariosGrid.innerHTML = `<p class="col-span-full text-center text-red-500">Horários não encontrados para o dia selecionado.</p>`;
+                return;
+            }
+
+            const { operacao, partidas } = sentidoData[selectedDia];
+            operacaoStatus.textContent = `Horário de Operação: ${operacao}`;
+
+            const nextPartida = getNextPartida(partidas, selectedDia);
+            
+            // Exibir Próxima Partida
+            if (nextPartida && nextPartida.time) {
+                proximaPartidaCard.classList.remove('hidden');
+                proximaPartidaTime.textContent = nextPartida.time;
+                proximaPartidaStatus.textContent = nextPartida.status;
+            } else {
+                proximaPartidaCard.classList.add('hidden');
+            }
+
+            // Exibir Horários em Grid
+            horariosGrid.innerHTML = partidas.map(time => {
+                const isNext = nextPartida && nextPartida.time === time;
+                
+                let timeClasses = "p-2 rounded-lg text-center text-sm font-bold border-2 transition duration-150 ease-in-out";
+                
+                if (isNext) {
+                    timeClasses += " bg-green-200 border-green-500 text-green-800 shadow-md transform scale-105";
+                } else {
+                    timeClasses += " bg-gray-100 border-gray-200 hover:bg-gray-200";
+                }
+
+                return `<div class="${timeClasses}">${time}</div>`;
+            }).join('');
+        }
+
+        function init() {
+            populateLinhas();
+            // Define o dia da semana atual como padrão
+            diaSelect.value = getDiaSemanaAtual(); 
+            // Seleciona a linha JD EUCALIPTOS para visualização inicial
+            linhaSelect.value = "6L02-10";
+            updateSentidoOptions();
+
+            // Atualiza a cada 30 segundos para manter o card de "Próxima Partida" atualizado.
+            setInterval(displayHorarios, 30000); 
+
+            // 2. REGISTRO DO SERVICE WORKER (ADICIONADO PARA PWA)
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then(reg => {
+                            console.log('Service Worker registrado com sucesso. Escopo:', reg.scope);
+                        })
+                        .catch(err => {
+                            console.error('Erro ao registrar Service Worker:', err);
+                        });
+                });
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
